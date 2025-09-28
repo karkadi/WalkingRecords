@@ -1,15 +1,16 @@
-#🚶‍♂️ WalkingRecords
+# 🚶‍♂️ WalkingRecords
 
 A personal walking & running tracker built with SwiftUI, featuring route tracking, statistics, and modern iOS technologies.
 
-#📸 Screenshots
-<p align="center">
- <img src="Screenshots/demo.gif" width="250">
- <img src="Screenshots/dark.png" width="250"> 
- <img src="Screenshots/light.png" width="250"> 
-</p>
+## 📸 Screenshots
 
-✨ Features
+<div align="center">
+  <img src="./ScreenShoots/demo.gif" width="30%" />
+  <img src="./ScreenShoots/dark.png" width="30%" />
+  <img src="./ScreenShoots/light.png" width="30%" />
+</div>
+
+## ✨ Features
 
 🚶‍♀️ Record walking, running, or cycling routes.
 
@@ -27,9 +28,9 @@ A personal walking & running tracker built with SwiftUI, featuring route trackin
 
 🌗 Light and Dark mode.
 
-#🛠 Tech Stack
+## 🛠 Tech Stack
 
-Swift 5.10+
+Swift 5.0+
 
 SwiftUI (UI, animations, widgets)
 
@@ -41,7 +42,8 @@ MapKit (maps, routes)
 
 Unit Tests
 
-#🏗 Project Structure
+## 🏗 Project Structure
+```bash
 WalkingRecords/
  Sources/
  ├── App/
@@ -64,21 +66,21 @@ WalkingRecords/
  └── Tests/
       ├── UnitTests/
       └── UITests/
-
-#🚀 Installation
+```
+## 🚀 Installation
 
 Clone the repository
-
+```bash
 git clone https://github.com/karkadi/WalkingRecords.git
 cd WalkingRecords
-
+```
 Open in Xcode 16+.
 
 Enable required Capabilities:
 
 Background Modes → Location updates
 
-#📋 Roadmap
+## 📋 Roadmap
 
  HealthKit integration (steps, calories, heart rate).
 
@@ -94,11 +96,11 @@ Background Modes → Location updates
 
  Achievements and gamification.
 
-#🤝 Contribution
+## 🤝 Contribution
 
 Pull requests are welcome! For major changes, please open an issue first to discuss what you’d like to change.
 
-#📄 License
+## 📄 License
 
 This project is licensed under the MIT License.
 See [LICENSE](LICENSE) for details.
