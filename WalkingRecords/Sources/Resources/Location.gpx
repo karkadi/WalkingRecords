@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="WalkApp" xmlns="http://www.topografix.com/GPX/1/1">
+    <wpt lat="37.33021" lon="-122.02667">
+        <name>Step 3</name>
+        <time>2025-09-26T15:20:11Z</time>
+    </wpt>
+    <wpt lat="37.33020" lon="-122.02441">
+        <name>Step 4</name>
+        <time>2025-09-26T15:21:02Z</time>
+    </wpt>
+    <wpt lat="37.33011" lon="-122.02212">
+        <name>Step 5</name>
+        <time>2025-09-26T15:21:52Z</time>
+    </wpt>
+    <wpt lat="37.32976" lon="-122.01989">
+        <name>Step 6</name>
+        <time>2025-09-26T15:22:45Z</time>
+    </wpt>
+    <wpt lat="37.32795" lon="-122.01983">
+        <name>Step 7</name>
+        <time>2025-09-26T15:23:42Z</time>
+    </wpt>
+    <wpt lat="37.32614" lon="-122.01974">
+        <name>Step 8</name>
+        <time>2025-09-26T15:24:37Z</time>
+    </wpt>
+    <wpt lat="37.32471" lon="-122.02113">
+        <name>Step 9</name>
+        <time>2025-09-26T15:25:56Z</time>
+    </wpt>
+    <wpt lat="37.32463" lon="-122.02340">
+        <name>Step 10</name>
+        <time>2025-09-26T15:26:56Z</time>
+    </wpt>
+    <wpt lat="37.32585" lon="-122.02509">
+        <name>Step 11</name>
+        <time>2025-09-26T15:28:13Z</time>
+    </wpt>
+    <wpt lat="37.32698" lon="-122.02685">
+        <name>Step 12</name>
+        <time>2025-09-26T15:29:20Z</time>
+    </wpt>
+    <wpt lat="37.32882" lon="-122.02686">
+        <name>Step 13</name>
+        <time>2025-09-26T15:30:14Z</time>
+    </wpt>
+</gpx>
