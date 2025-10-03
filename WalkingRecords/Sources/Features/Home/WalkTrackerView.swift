@@ -137,24 +137,53 @@ struct WalkTrackerView: View {
                 )
                 .padding(.horizontal)
                 
-                WalkingManView(isWaling: store.isTracking, width: 50.0)
+                WalkingManView(isWaling: store.trackingState == .active, width: 50.0)
                     .offset(y: -4.0)
                     .padding(.horizontal)
                 
                 Spacer()
                 
-                Button(
-                    action: {
-                        send(.toggleTracking)
-                    },
-                    label: {
-                        Image(systemName: store.isTracking ?  "stop.circle": "play.circle")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 50.0, height: 50.0)
-                            .tint(store.isTracking ? .red : .blue)
-                    }
-                )
+                switch store.trackingState {
+                case .active:
+                    Button(
+                        action: {
+                            store.showStopMenu = true
+                        },
+                        label: {
+                            Image(systemName: "stop.circle")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 50.0, height: 50.0)
+                                .tint(.red)
+                        }
+                    )
+                case .stopped:
+                    Button(
+                        action: {
+                            send(.startTracking)
+                        },
+                        label: {
+                            Image(systemName: "record.circle")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 50.0, height: 50.0)
+                                .tint(.red)
+                        }
+                    )
+                case .paused:
+                    Button(
+                        action: {
+                            send(.resumeTracking)
+                        },
+                        label: {
+                            Image(systemName: "playpause.circle")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 50.0, height: 50.0)
+                                .tint(.red)
+                        }
+                    )
+                }
                 
                 Spacer()
                 
@@ -171,6 +200,16 @@ struct WalkTrackerView: View {
                     }
                 )
                 .padding(.horizontal)
+            }
+            .confirmationDialog("Workout options",
+                                isPresented: $store.showStopMenu,
+                                titleVisibility: .visible) {
+                Button("End Workout", role: .destructive) {
+                    send(.stopTracking)
+                }
+                Button("Pause") {
+                    send(.pauseTracking)
+                }
             }
             
             if !store.pastSessions.isEmpty {
@@ -247,7 +286,6 @@ struct WalkTrackerView: View {
     }
     
 }
-
 #Preview {
     WalkTrackerView(store: Store(initialState: WalkTrackerReducer.State()) { WalkTrackerReducer() })
 }

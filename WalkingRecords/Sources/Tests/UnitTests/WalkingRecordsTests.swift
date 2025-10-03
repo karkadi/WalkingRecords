@@ -18,14 +18,17 @@ extension TestStore {
     }
 }
 
+@MainActor
+@Suite("WalkingRecords Tests")
 struct WalkingRecordsTests {
     
-    @Test func testInitialState() async {
-        let store = await TestStore(initialState: WalkTrackerReducer.State()) {
+    @Test("Initial State")
+    func testInitialState() async {
+        let store = TestStore(initialState: WalkTrackerReducer.State()) {
             WalkTrackerReducer()
         }
         
-        #expect(store.state.isTracking == false)
+        #expect(store.state.trackingState == .stopped)
         #expect(store.state.points.isEmpty)
         #expect(store.state.totalDistance == 0.0)
         #expect(store.state.pastSessions.isEmpty)
@@ -33,7 +36,7 @@ struct WalkingRecordsTests {
     }
     
     @Test func testToggleTrackingStartsTracking() async {
-        let store = await TestStore(initialState: WalkTrackerReducer.State()) {
+        let store = TestStore(initialState: WalkTrackerReducer.State()) {
             WalkTrackerReducer()
         } withDependencies: {
             $0.locationManager.startUpdatingLocation = { }
@@ -42,8 +45,8 @@ struct WalkingRecordsTests {
         }
         await store.setExhaustivity(.off)
         
-        await store.send(.view(.toggleTracking)) {
-            $0.isTracking = true
+        await store.send(.view(.startTracking)) {
+            $0.trackingState = .active
             // $0.currentSessionStartTime = Date()
             $0.points = []
             $0.showSession = nil
@@ -53,7 +56,7 @@ struct WalkingRecordsTests {
     }
     
     @Test func testToggleTrackingStopsTracking() async {
-        let store = await TestStore(initialState: WalkTrackerReducer.State(isTracking: true)) {
+        let store = TestStore(initialState: WalkTrackerReducer.State(trackingState: .active)) {
             WalkTrackerReducer()
         } withDependencies: {
             $0.locationManager.startUpdatingLocation = { }
@@ -63,8 +66,8 @@ struct WalkingRecordsTests {
         }
         await store.setExhaustivity(.off)
         
-        await store.send(.view(.toggleTracking)) {
-            $0.isTracking = false
+        await store.send(.view(.stopTracking)) {
+            $0.trackingState = .stopped
         }
         
         await store.receive(\.endWalk)
@@ -81,7 +84,7 @@ struct WalkingRecordsTests {
             longitude: -122.023907
         )
         
-        let store = await TestStore(initialState: WalkTrackerReducer.State(isTracking: true)) {
+        let store = TestStore(initialState: WalkTrackerReducer.State(trackingState: .active)) {
             WalkTrackerReducer()
         }
         
@@ -115,7 +118,7 @@ struct WalkingRecordsTests {
             )
         ]
         
-        let store = await TestStore(initialState: WalkTrackerReducer.State()) {
+        let store = TestStore(initialState: WalkTrackerReducer.State()) {
             WalkTrackerReducer()
         } withDependencies: {
             $0.databaseClient = MockDatabaseClient(mockFetchAllWalksResult: mockWalks)
@@ -133,7 +136,7 @@ struct WalkingRecordsTests {
         }
         let testError = TestError()
         
-        let store = await TestStore(initialState: WalkTrackerReducer.State()) {
+        let store = TestStore(initialState: WalkTrackerReducer.State()) {
             WalkTrackerReducer()
         } withDependencies: {
             $0.databaseClient = MockDatabaseClient(mockedError: testError)
@@ -155,7 +158,7 @@ struct WalkingRecordsTests {
             points: []
         )
         
-        let store = await TestStore(initialState: WalkTrackerReducer.State()) {
+        let store = TestStore(initialState: WalkTrackerReducer.State()) {
             WalkTrackerReducer()
         }
         
@@ -180,7 +183,7 @@ struct WalkingRecordsTests {
             )
         ]
         
-        let store = await TestStore(initialState: WalkTrackerReducer.State(pastSessions: mockWalks)) {
+        let store = TestStore(initialState: WalkTrackerReducer.State(pastSessions: mockWalks)) {
             WalkTrackerReducer()
         } withDependencies: {
             $0.databaseClient = MockDatabaseClient()
@@ -195,7 +198,7 @@ struct WalkingRecordsTests {
     }
     
     @Test func testShowSettings() async {
-        let store = await TestStore(initialState: WalkTrackerReducer.State()) {
+        let store = TestStore(initialState: WalkTrackerReducer.State()) {
             WalkTrackerReducer()
         }
         await store.setExhaustivity(.off)
@@ -208,14 +211,14 @@ struct WalkingRecordsTests {
     
     @Test func testDurationCalculationWhileTracking() async {
         let startTime = Date()
-        let store = await TestStore(initialState: WalkTrackerReducer.State(
-            isTracking: true,
+        let store = TestStore(initialState: WalkTrackerReducer.State(
+            trackingState: .active,
             currentSessionStartTime: startTime
         )) {
             WalkTrackerReducer()
         }
         
-        let duration = await store.state.duration
+        let duration = store.state.duration
         #expect(duration != nil)
     }
     
@@ -230,16 +233,16 @@ struct WalkingRecordsTests {
             points: []
         )
         
-        let store = await TestStore(initialState: WalkTrackerReducer.State(showSession: walk)) {
+        let store = TestStore(initialState: WalkTrackerReducer.State(showSession: walk)) {
             WalkTrackerReducer()
         }
         
-        let duration = await store.state.duration
+        let duration = store.state.duration
         #expect(duration == "1 h 0 m 0 s")
     }
     
     @Test func testOnAppearFetchesWalksAndRequestsLocation() async throws {
-        let store = await TestStore(initialState: WalkTrackerReducer.State()) {
+        let store = TestStore(initialState: WalkTrackerReducer.State()) {
             WalkTrackerReducer()
         } withDependencies: {
             $0.locationManager.requestAlwaysAuthorization = { }
@@ -253,5 +256,4 @@ struct WalkingRecordsTests {
             }
         }
     }
-    
 }

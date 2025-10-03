@@ -12,6 +12,12 @@ import CoreLocationClient
 // MARK: - TCA Reducer
 @Reducer
 struct WalkTrackerReducer {
+    enum TrackingState {
+        case paused
+        case stopped
+        case active
+    }
+    
     // MARK: - State
     @ObservableState
     struct State: Equatable {
@@ -24,7 +30,7 @@ struct WalkTrackerReducer {
         var cameraPosition: MapCameraPosition = .automatic
         var span: MKCoordinateSpan = .init(latitudeDelta: 0.001, longitudeDelta: 0.001)
         
-        var isTracking = false
+        var trackingState: TrackingState = .stopped
         var showSession: WalkSessionDTO?
         var pastSessions: [WalkSessionDTO] = []
         
@@ -35,12 +41,13 @@ struct WalkTrackerReducer {
         var currentSessionStartTime: Date?
         var isExportingFile: Bool = false
         var isImportingFile: Bool = false
+        var showStopMenu: Bool = false
         var error: Error?
         
         @Presents var destination: SettingsReducer.State?
         
         static func == (lhs: WalkTrackerReducer.State, rhs: WalkTrackerReducer.State) -> Bool {
-            lhs.isTracking == rhs.isTracking &&
+            lhs.trackingState == rhs.trackingState &&
             lhs.showSession == rhs.showSession &&
             lhs.pastSessions == rhs.pastSessions &&
             lhs.currentSessionStartTime == rhs.currentSessionStartTime &&
@@ -48,7 +55,7 @@ struct WalkTrackerReducer {
         }
         
         var duration: String? {
-            if isTracking, let startTime = currentSessionStartTime {
+            if trackingState == .active, let startTime = currentSessionStartTime {
                 return Date().timeIntervalSince(startTime).detailedDuration
             } else if let session = showSession, let endTime = session.endTime {
                 return endTime.timeIntervalSince(session.startTime).detailedDuration
@@ -66,7 +73,7 @@ struct WalkTrackerReducer {
                 
                 let speedKmH = session.totalDistance / 1000.0 / durationInHours
                 return String(format: "%.1f km/h", speedKmH)
-            } else if isTracking, let startTime = currentSessionStartTime {
+            } else if trackingState == .active, let startTime = currentSessionStartTime {
                 // Calculate current average speed for active session
                 let durationInHours = Date().timeIntervalSince(startTime) / 3600.0
                 guard durationInHours > 0 else { return nil }
@@ -90,7 +97,10 @@ struct WalkTrackerReducer {
         // swiftlint:disable nesting
         enum View {
             case onAppear
-            case toggleTracking
+            case startTracking
+            case stopTracking
+            case pauseTracking
+            case resumeTracking
             case showSettings
             case deleteWalk(IndexSet)
             case displayWalk(WalkSessionDTO)
@@ -172,8 +182,17 @@ struct WalkTrackerReducer {
             state.span = context.region.span
             return .none
             
-        case .toggleTracking:
-            return handleToggleTracking(&state)
+        case .startTracking:
+            return handleStartTracking(&state)
+            
+        case .stopTracking:
+            return handleStopTracking(&state)
+            
+        case .pauseTracking:
+            return handlePauseTracking(&state)
+            
+        case .resumeTracking:
+            return handleResumeTracking(&state)
             
         case .deleteWalk(let offsets):
             return handleDeleteWalk(&state, offsets)
@@ -189,23 +208,35 @@ struct WalkTrackerReducer {
         }
     }
     
-    private func handleToggleTracking(_ state: inout State) -> Effect<Action> {
-        state.isTracking.toggle()
-        if state.isTracking {
-            state.currentSessionStartTime = Date()
-            state.points = []
-            state.showSession = nil
-            state.totalDistance = 0.0
+    private func handleStartTracking(_ state: inout State) -> Effect<Action> {
+        state.currentSessionStartTime = Date()
+        state.points = []
+        state.showSession = nil
+        state.totalDistance = 0.0
+        return handleResumeTracking(&state)
+    }
+    
+    private func handleStopTracking(_ state: inout State) -> Effect<Action> {
+        state.trackingState = .stopped
+        return .run { send in
+            await locationManager.stopUpdatingLocation()
+            await send(.endWalk)
         }
-        return .run { [isTracking = state.isTracking] send in
-            if isTracking {
-                await locationManager.startUpdatingLocation()
-                for await action in await locationManager.delegate() {
-                    await send(.locationManager(action), animation: .default)
-                }
-            } else {
-                await locationManager.stopUpdatingLocation()
-                await send(.endWalk)
+    }
+    
+    private func handlePauseTracking(_ state: inout State) -> Effect<Action> {
+        state.trackingState = .paused
+        return .run { _ in
+            await locationManager.stopUpdatingLocation()
+        }
+    }
+
+    private func handleResumeTracking(_ state: inout State) -> Effect<Action> {
+        state.trackingState = .active
+        return .run { send in
+            await locationManager.startUpdatingLocation()
+            for await action in await locationManager.delegate() {
+                await send(.locationManager(action), animation: .default)
             }
         }
     }

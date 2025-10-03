@@ -9,6 +9,15 @@
     }
   ],
   "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:WalkingRecords.xcodeproj",
+          "identifier" : "5B0C59802DBA2801000C95D3",
+          "name" : "WalkingRecords"
+        }
+      ]
+    },
     "performanceAntipatternCheckerEnabled" : true,
     "targetForVariableExpansion" : {
       "containerPath" : "container:WalkingRecords.xcodeproj",

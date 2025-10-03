@@ -35,7 +35,7 @@
 		5B0C59902DBA2802000C95D3 /* WalkingRecordsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WalkingRecordsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B0C599A2DBA2802000C95D3 /* WalkingRecordsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WalkingRecordsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B98ED202E899FA3008C7B37 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		5B98ED432E89A697008C7B37 /* WalkingRecords.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = WalkingRecords.xctestplan; sourceTree = "<group>"; };
+		5B98ED432E89A697008C7B37 /* WalkingRecords.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WalkingRecords.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -46,6 +46,7 @@
 				Sources/Tests/UITests/WalkingRecordsUITests.swift,
 				Sources/Tests/UITests/WalkingRecordsUITestsLaunchTests.swift,
 				Sources/Tests/UnitTests/Mock/MockDatabaseService.swift,
+				Sources/Tests/UnitTests/SettingsReducerTests.swift,
 				Sources/Tests/UnitTests/WalkingRecordsTests.swift,
 			);
 			target = 5B0C59802DBA2801000C95D3 /* WalkingRecords */;
@@ -54,6 +55,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Sources/Tests/UnitTests/Mock/MockDatabaseService.swift,
+				Sources/Tests/UnitTests/SettingsReducerTests.swift,
 				Sources/Tests/UnitTests/WalkingRecordsTests.swift,
 			);
 			target = 5B0C598F2DBA2802000C95D3 /* WalkingRecordsTests */;
@@ -464,7 +466,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MBM8NLR735;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -503,7 +505,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MBM8NLR735;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
