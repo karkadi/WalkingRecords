@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		5B0B02122E87116900D1D66E /* SQLiteData in Frameworks */ = {isa = PBXBuildFile; productRef = 5B0B02112E87116900D1D66E /* SQLiteData */; };
-		5B5E90352DBEDBC5007C3334 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 5B5E90342DBEDBC5007C3334 /* ComposableArchitecture */; };
 		5B98ED212E899FA3008C7B37 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5B98ED202E899FA3008C7B37 /* README.md */; };
-		5BF9BF712DBF6B910085867E /* CoreLocationClient in Frameworks */ = {isa = PBXBuildFile; productRef = 5BF9BF702DBF6B910085867E /* CoreLocationClient */; };
+		5BF43AEB2E913FF400A4670F /* CoreLocationClient in Frameworks */ = {isa = PBXBuildFile; productRef = 5BF43AEA2E913FF400A4670F /* CoreLocationClient */; };
+		5BF43AEE2E91403E00A4670F /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 5BF43AED2E91403E00A4670F /* ComposableArchitecture */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,7 +45,6 @@
 				Info.plist,
 				Sources/Tests/UITests/WalkingRecordsUITests.swift,
 				Sources/Tests/UITests/WalkingRecordsUITestsLaunchTests.swift,
-				Sources/Tests/UnitTests/Mock/MockDatabaseService.swift,
 				Sources/Tests/UnitTests/SettingsReducerTests.swift,
 				Sources/Tests/UnitTests/WalkingRecordsTests.swift,
 			);
@@ -54,7 +53,6 @@
 		5B98ED412E89A5AA008C7B37 /* Exceptions for "WalkingRecords" folder in "WalkingRecordsTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Sources/Tests/UnitTests/Mock/MockDatabaseService.swift,
 				Sources/Tests/UnitTests/SettingsReducerTests.swift,
 				Sources/Tests/UnitTests/WalkingRecordsTests.swift,
 			);
@@ -89,8 +87,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B0B02122E87116900D1D66E /* SQLiteData in Frameworks */,
-				5B5E90352DBEDBC5007C3334 /* ComposableArchitecture in Frameworks */,
-				5BF9BF712DBF6B910085867E /* CoreLocationClient in Frameworks */,
+				5BF43AEB2E913FF400A4670F /* CoreLocationClient in Frameworks */,
+				5BF43AEE2E91403E00A4670F /* ComposableArchitecture in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,6 +115,7 @@
 				5B98ED432E89A697008C7B37 /* WalkingRecords.xctestplan */,
 				5B98ED202E899FA3008C7B37 /* README.md */,
 				5B0C59832DBA2801000C95D3 /* WalkingRecords */,
+				5BF43AE32E913C1200A4670F /* Frameworks */,
 				5B0C59822DBA2801000C95D3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -129,6 +128,13 @@
 				5B0C599A2DBA2802000C95D3 /* WalkingRecordsUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5BF43AE32E913C1200A4670F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -152,9 +158,9 @@
 			);
 			name = WalkingRecords;
 			packageProductDependencies = (
-				5B5E90342DBEDBC5007C3334 /* ComposableArchitecture */,
-				5BF9BF702DBF6B910085867E /* CoreLocationClient */,
 				5B0B02112E87116900D1D66E /* SQLiteData */,
+				5BF43AEA2E913FF400A4670F /* CoreLocationClient */,
+				5BF43AED2E91403E00A4670F /* ComposableArchitecture */,
 			);
 			productName = WalkingRecords;
 			productReference = 5B0C59812DBA2801000C95D3 /* WalkingRecords.app */;
@@ -233,10 +239,9 @@
 			mainGroup = 5B0C59782DBA2801000C95D3;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				5B5E90332DBEDBC5007C3334 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
-				5BF9BF6F2DBF6B910085867E /* XCRemoteSwiftPackageReference "composable-core-location" */,
-				5BBBC4CA2E852B030029FB57 /* XCRemoteSwiftPackageReference "swift-navigation" */,
 				5B0B02102E87116900D1D66E /* XCRemoteSwiftPackageReference "sqlite-data" */,
+				5BF43AE92E913FF400A4670F /* XCRemoteSwiftPackageReference "composable-core-location" */,
+				5BF43AEC2E91403E00A4670F /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5B0C59822DBA2801000C95D3 /* Products */;
@@ -289,10 +294,11 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(BUILD_DIR)/swiftlint_output.log",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -x \"/opt/homebrew/bin/swiftlint\" ]; then\n  CONFIG_PATH=\"${PROJECT_DIR}/.swiftlint.yml\"\n  SWIFTLINT_OUTPUT=\"${PROJECT_DIR}/swiftlint_output.log\"\n  \n  # Run SwiftLint only on modified files if possible\n  if [ -f \"$CONFIG_PATH\" ]; then\n    /opt/homebrew/bin/swiftlint --config \"$CONFIG_PATH\" --quiet > \"$SWIFTLINT_OUTPUT\" 2>&1\n  else\n    /opt/homebrew/bin/swiftlint --quiet > \"$SWIFTLINT_OUTPUT\" 2>&1\n  fi\n  \n  # Check results\n  if [ -s \"$SWIFTLINT_OUTPUT\" ]; then\n    echo \"SwiftLint issues detected:\"\n    cat \"$SWIFTLINT_OUTPUT\"\n  fi\n  \nelse\n  echo \"warning: SwiftLint not found at /opt/homebrew/bin/swiftlint\"\nfi\n";
+			shellScript = "set -euo pipefail\n\nif [ -x \"/opt/homebrew/bin/swiftlint\" ]; then\n  CONFIG_PATH=\"${PROJECT_DIR}/.swiftlint.yml\"\n  LINT_OUTPUT=\"${BUILD_DIR}/swiftlint_output.log\"\n  \n  if [ -f \"$CONFIG_PATH\" ]; then\n    /opt/homebrew/bin/swiftlint --config \"$CONFIG_PATH\" --strict > \"$LINT_OUTPUT\"\n  else\n    /opt/homebrew/bin/swiftlint --strict > \"$LINT_OUTPUT\"\n  fi\n  \n  # Print results to console\n  if [ -f \"$LINT_OUTPUT\" ]; then\n    cat \"$LINT_OUTPUT\"\n  fi\nelse\n  echo \"warning: SwiftLint not found at /opt/homebrew/bin/swiftlint\"\n  # Create empty output file to satisfy dependency\n  mkdir -p \"${BUILD_DIR}\"\n  touch \"${BUILD_DIR}/swiftlint_output.log\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -491,9 +497,10 @@
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = amongus.com.WalkingRecords;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited) SQLITEDATA";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -532,7 +539,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SQLITEDATA;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -550,7 +558,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = amongus.com.WalkingRecordsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WalkingRecords.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WalkingRecords";
 			};
@@ -569,7 +577,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = amongus.com.WalkingRecordsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WalkingRecords.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WalkingRecords";
 			};
@@ -587,7 +595,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = amongus.com.WalkingRecordsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = WalkingRecords;
 			};
@@ -605,7 +613,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = amongus.com.WalkingRecordsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = WalkingRecords;
 			};
@@ -661,28 +669,20 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		5B5E90332DBEDBC5007C3334 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
+		5BF43AE92E913FF400A4670F /* XCRemoteSwiftPackageReference "composable-core-location" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/johankool/composable-core-location";
+			requirement = {
+				branch = "swift-concurrency-3";
+				kind = branch;
+			};
+		};
+		5BF43AEC2E91403E00A4670F /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.9.1;
-			};
-		};
-		5BBBC4CA2E852B030029FB57 /* XCRemoteSwiftPackageReference "swift-navigation" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swift-navigation";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.0;
-			};
-		};
-		5BF9BF6F2DBF6B910085867E /* XCRemoteSwiftPackageReference "composable-core-location" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/johankool/composable-core-location/";
-			requirement = {
-				branch = "swift-concurrency-3";
-				kind = branch;
+				minimumVersion = 1.22.3;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -693,15 +693,15 @@
 			package = 5B0B02102E87116900D1D66E /* XCRemoteSwiftPackageReference "sqlite-data" */;
 			productName = SQLiteData;
 		};
-		5B5E90342DBEDBC5007C3334 /* ComposableArchitecture */ = {
+		5BF43AEA2E913FF400A4670F /* CoreLocationClient */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5B5E90332DBEDBC5007C3334 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
-			productName = ComposableArchitecture;
-		};
-		5BF9BF702DBF6B910085867E /* CoreLocationClient */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5BF9BF6F2DBF6B910085867E /* XCRemoteSwiftPackageReference "composable-core-location" */;
+			package = 5BF43AE92E913FF400A4670F /* XCRemoteSwiftPackageReference "composable-core-location" */;
 			productName = CoreLocationClient;
+		};
+		5BF43AED2E91403E00A4670F /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5BF43AEC2E91403E00A4670F /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			productName = ComposableArchitecture;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

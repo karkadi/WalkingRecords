@@ -46,7 +46,7 @@ struct WalkTrackerView: View {
             popoverContent
         }
         .sheet(
-            item: $store.scope(state: \.destination, action: \.destination)
+            item: $store.scope(state: \.settings, action: \.settings)
         ) { settingsStore in
             SettingsView(store: settingsStore)
                 .padding()

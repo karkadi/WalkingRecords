@@ -10,9 +10,7 @@ import Foundation
 
 @Reducer
 struct SettingsReducer {
-    // MARK: - Dependencies
-    @Dependency(\.dismiss) var dismiss
-    
+
     // MARK: - State
     @ObservableState
     public struct State: Equatable {
@@ -44,13 +42,10 @@ struct SettingsReducer {
         case let .view(viewAction):
             switch viewAction {
             case .cancelButtonTapped:
-                return .run { _ in
-                    await self.dismiss()
-                }
+                return .none
             }
         case .binding:
             return .none
         }
     }
-    
 }

@@ -21,6 +21,7 @@ struct WalkTrackerReducer {
     // MARK: - State
     @ObservableState
     struct State: Equatable {
+        @Presents var settings: SettingsReducer.State?
         @Shared(.appStorage("exportPrecision")) var exportPrecision: Double = 1.0
         
         var mapCamera: MapCamera = .init(centerCoordinate: .init(latitude: 37.33018, longitude: -122.023907),
@@ -43,8 +44,6 @@ struct WalkTrackerReducer {
         var isImportingFile: Bool = false
         var showStopMenu: Bool = false
         var error: Error?
-        
-        @Presents var destination: SettingsReducer.State?
         
         static func == (lhs: WalkTrackerReducer.State, rhs: WalkTrackerReducer.State) -> Bool {
             lhs.trackingState == rhs.trackingState &&
@@ -91,7 +90,7 @@ struct WalkTrackerReducer {
         case walksResponse(Result<[WalkSessionDTO], Error>)
         case locationManager(LocationManager.Action)
         case endWalk
-        case destination(PresentationAction<SettingsReducer.Action>)
+        case settings(PresentationAction<SettingsReducer.Action>)
         
         case view(View)
         // swiftlint:disable nesting
@@ -111,17 +110,17 @@ struct WalkTrackerReducer {
         // swiftlint:enable nesting
     }
     
-    @Dependency(\.locationManager) var locationManager: LocationManager
+    @Dependency(\.locationManager) private var locationManager: LocationManager
 #if SQLITEDATA
-    @Dependency(\.databaseClient) private var databaseService
+    @Dependency(\.databaseClient) private var databaseClient
 #else
-    @Dependency(\.databaseService) private var databaseService
+    @Dependency(\.databaseClient) private var databaseClient
 #endif
     
     public var body: some Reducer<State, Action> {
         BindingReducer()
         Reduce(core)
-            .ifLet(\.$destination, action: \.destination) {
+            .ifLet(\.$settings, action: \.settings) {
                 SettingsReducer()
             }
     }
@@ -159,7 +158,11 @@ struct WalkTrackerReducer {
         case .binding:
             return .none
             
-        case .destination:
+        case .settings(.presented(.view(.cancelButtonTapped))):
+            state.settings = nil
+            return .none
+            
+        case .settings:
             return .none
         }
     }
@@ -174,7 +177,7 @@ struct WalkTrackerReducer {
             }
             
         case .showSettings:
-            state.destination = SettingsReducer.State()
+            state.settings = SettingsReducer.State()
             return .none
             
         case .mapSpanChanged(let context):
@@ -245,7 +248,7 @@ struct WalkTrackerReducer {
         let walkIds = offsets.map { state.pastSessions[$0].id }
         return .run { send in
             for walkId in walkIds {
-                try await databaseService.deleteWalk(walkId: walkId)
+                try await databaseClient.deleteWalk(walkId)
             }
             await send(.fetchWalks)
         } catch: { error, _ in
@@ -263,7 +266,7 @@ struct WalkTrackerReducer {
     
     private func handleImportDocument(_ url: URL) -> Effect<Action> {
         return .run { send in
-            try await databaseService.importWalk(from: url)
+            try await databaseClient.importWalk(url)
             await send(.fetchWalks)
         }
     }
@@ -294,7 +297,7 @@ struct WalkTrackerReducer {
     private func handleFetchWalks() -> Effect<Action> {
         return .run { send in
             do {
-                let walks = try await databaseService.fetchAllWalks()
+                let walks = try await databaseClient.fetchAllWalks()
                 await send(.walksResponse(.success(walks)))
             } catch {
                 await send(.walksResponse(.failure(error)))
@@ -305,11 +308,11 @@ struct WalkTrackerReducer {
     private func handleEndWalk(_ state: inout State) -> Effect<Action> {
         return .run { [points = state.points, totalDistance = state.totalDistance] send in
             let startDate = points.first?.timestamp ?? Date()
-            let walk = try await databaseService.createWalk(startDate: startDate)
-            try await databaseService.addLocations(walkId: walk.id, points: points)
-            try await databaseService.endWalk(walkId: walk.id,
-                                              totalDistance: totalDistance,
-                                              endDate: Date())
+            let walk = try await databaseClient.createWalk(startDate)
+            try await databaseClient.addLocations(walk.id, points)
+            try await databaseClient.endWalk(walk.id,
+                                              totalDistance,
+                                              Date())
             
             await send(.fetchWalks)
         }

@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct TextFileDocument: FileDocument {
-    static var readableContentTypes: [UTType] = [.plainText]
+    static let readableContentTypes: [UTType] = [.plainText]
 
     let url: URL?
 

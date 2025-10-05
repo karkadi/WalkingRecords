@@ -62,7 +62,16 @@ struct WalkingRecordsTests {
             $0.locationManager.startUpdatingLocation = { }
             $0.locationManager.delegate = { .never }
             $0.locationManager.stopUpdatingLocation = { }
-            $0.databaseClient = MockDatabaseClient()
+            //  $0.databaseClient = MockDatabaseClient()
+            $0.databaseClient = DatabaseClient(createWalk: { _ in
+                WalkSessionDTO(id: UUID(), startTime: Date(), endTime: Date(), totalDistance: 0, points: [])
+            },
+                                               endWalk: { _, _, _ in },
+                                               addLocations: { _, _ in },
+                                               fetchAllWalks: { [] },
+                                               deleteWalk: { _ in },
+                                               fetchWalk: { _ in nil},
+                                               importWalk: { _ in })
         }
         await store.setExhaustivity(.off)
         
@@ -121,7 +130,16 @@ struct WalkingRecordsTests {
         let store = TestStore(initialState: WalkTrackerReducer.State()) {
             WalkTrackerReducer()
         } withDependencies: {
-            $0.databaseClient = MockDatabaseClient(mockFetchAllWalksResult: mockWalks)
+            $0.databaseClient = DatabaseClient(createWalk: { _ in
+                WalkSessionDTO(id: UUID(), startTime: Date(), endTime: Date(), totalDistance: 0, points: [])
+            },
+                                               endWalk: { _, _, _ in },
+                                               addLocations: { _, _ in },
+                                               fetchAllWalks: { mockWalks },
+                                               deleteWalk: { _ in },
+                                               fetchWalk: { _ in nil},
+                                               importWalk: { _ in })
+            
         }
         
         await store.send(.fetchWalks)
@@ -139,7 +157,15 @@ struct WalkingRecordsTests {
         let store = TestStore(initialState: WalkTrackerReducer.State()) {
             WalkTrackerReducer()
         } withDependencies: {
-            $0.databaseClient = MockDatabaseClient(mockedError: testError)
+            $0.databaseClient = DatabaseClient(createWalk: { _ in
+                WalkSessionDTO(id: UUID(), startTime: Date(), endTime: Date(), totalDistance: 0, points: [])
+            },
+                                               endWalk: { _, _, _ in },
+                                               addLocations: { _, _ in },
+                                               fetchAllWalks: { throw testError},
+                                               deleteWalk: { _ in },
+                                               fetchWalk: { _ in nil},
+                                               importWalk: { _ in })
         }
         await store.setExhaustivity(.off)
         
@@ -186,7 +212,15 @@ struct WalkingRecordsTests {
         let store = TestStore(initialState: WalkTrackerReducer.State(pastSessions: mockWalks)) {
             WalkTrackerReducer()
         } withDependencies: {
-            $0.databaseClient = MockDatabaseClient()
+            $0.databaseClient = DatabaseClient(createWalk: { _ in
+                WalkSessionDTO(id: UUID(), startTime: Date(), endTime: Date(), totalDistance: 0, points: [])
+            },
+                                               endWalk: { _, _, _ in },
+                                               addLocations: { _, _ in },
+                                               fetchAllWalks: { [] },
+                                               deleteWalk: { _ in },
+                                               fetchWalk: { _ in nil},
+                                               importWalk: { _ in })
         }
         await store.setExhaustivity(.off)
         
@@ -204,9 +238,8 @@ struct WalkingRecordsTests {
         await store.setExhaustivity(.off)
         
         await store.send(.view(.showSettings)) {
-            $0.destination = SettingsReducer.State()
+            $0.settings = SettingsReducer.State()
         }
-        
     }
     
     @Test func testDurationCalculationWhileTracking() async {
@@ -246,7 +279,15 @@ struct WalkingRecordsTests {
             WalkTrackerReducer()
         } withDependencies: {
             $0.locationManager.requestAlwaysAuthorization = { }
-            $0.databaseClient = MockDatabaseClient()
+            $0.databaseClient = DatabaseClient(createWalk: { _ in
+                WalkSessionDTO(id: UUID(), startTime: Date(), endTime: Date(), totalDistance: 0, points: [])
+            },
+                                               endWalk: { _, _, _ in },
+                                               addLocations: { _, _ in },
+                                               fetchAllWalks: { [] },
+                                               deleteWalk: { _ in },
+                                               fetchWalk: { _ in nil},
+                                               importWalk: { _ in })
         }
         await store.withExhaustivity(.off) {
             await store.send(.view(.onAppear))

@@ -30,15 +30,14 @@ struct SettingsReducerTests {
         }
     }
     
-    @Test("Cancel button calls dismiss")
-    func testCancelButtonTappedCallsDismiss() async {
-        var didDismiss = false
-        let store = TestStore(initialState: SettingsReducer.State()) {
-            SettingsReducer()
-        } withDependencies: {
-            $0.dismiss = DismissEffect { didDismiss = true }
+    @Test("Cancel button propagates to parent and dismisses settings")
+    func testCancelButtonTappedPropagatesToParent() async {
+        let initialSettingsState = SettingsReducer.State()
+        let store = TestStore(initialState: WalkTrackerReducer.State(settings: initialSettingsState)) {
+            WalkTrackerReducer()
         }
-        await store.send(.view(.cancelButtonTapped))
-        #expect(didDismiss, "Dismiss closure was called")
+        await store.send(.settings(.presented(.view(.cancelButtonTapped))))
+        #expect(store.state.settings == nil, "WalkTrackerReducer cleared settings on cancel")
     }
+
 }
